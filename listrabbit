@@ -1,0 +1,8 @@
+#!/bin/bash
+
+echo "########### queues ###########"
+sudo rabbitmqctl list_queues
+echo "########### consumers ###########"
+sudo rabbitmqctl list_consumers
+echo "########### connections ###########"
+sudo rabbitmqctl list_connections

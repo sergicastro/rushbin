@@ -1,0 +1,11 @@
+#!/bin/bash
+sudo rm -rvf /opt/tomcat/temp/* /opt/tomcat/work
+sudo rm -rvf /opt/tomcat/webapps/api*
+sudo rm -rvf /opt/tomcat/webapps/am*
+sudo rm -rvf /opt/tomcat/webapps/bpm*
+sudo rm -rvf /opt/tomcat/webapps/vsm*
+sudo rm -rvf /opt/tomcat/webapps/virtualfactory*
+sudo rm -rvf /opt/tomcat/webapps/nodecollector*
+sudo rm -rvf /opt/tomcat/webapps/cpp*
+sudo rm -rvf /opt/tomcat/webapps/ssm*
+sudo rm -rvf /opt/tomcat/webapps/m.war /opt/tomcat/webapps/m

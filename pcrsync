@@ -1,0 +1,137 @@
+#!/usr/bin/ruby
+
+require "net/http"
+require "jsonpath"
+require "colorize"
+require "thor"
+require "yaml"
+require "yaml/store"
+
+class VdcSync < Thor
+    
+    desc "list_locations", "list the available public locations"
+    def list_locations
+        puts ApiClient.new().list_locations().collect{ |x| x["name"] }.join("\n").colorize(:blue)
+    end
+
+    desc "list <location_name>", "list the remote vdcs in the given location"
+    def list(location_name)
+        client = ApiClient.new()
+        link = client.get_location_link(location_name)
+        puts client.list_remotes(link).join("\n").colorize(:blue)
+    end
+
+    desc "sync <location_name>", "Starts the synchronization of the given location"
+    def sync(location_name)
+        client = ApiClient.new()
+        link = client.get_location_sync_link(location_name)
+        status_link = client.sync_pcr(link)
+        status = "PENDING"
+        until status =~ /FINISHED.*/
+            status = client.get_status(status_link)
+        end
+    end
+end
+
+class ApiClient
+
+    def initialize
+        conf_filename = "#{ENV["HOME"]}/.vdcsync.yml"
+        begin
+            @conf = YAML.load_file(conf_filename)
+        rescue
+            puts "Set the api location:"
+            location = STDIN.gets.chomp
+            puts "Set the api user:"
+            user = STDIN.gets.chomp
+            puts "Set the api user password:"
+            password = STDIN.gets.chomp
+            @conf = YAML::Store.new(conf_filename)
+            @conf.transaction do
+                @conf["location"] = location
+                @conf["user"] = user
+                @conf["password"] = password
+            end
+            @conf = YAML.load_file(conf_filename)
+        end
+    end
+
+    def list_locations
+        request = Net::HTTP::Get.new("#{@conf["location"]}/cloud/locations")
+        request.add_field('accept', 'application/vnd.abiquo.publiccloudregions+json')
+        body = send_request(request).body
+        JsonPath.on(body, "$.collection..")[0]
+    end
+
+    def get_location_sync_link(name)
+        list = list_locations.select{ |x| x["name"] == name }
+        link = list.collect{ |x| x["links"].select{ |link| link["rel"] == "sync" }[0] }[0]
+        if link.nil?
+            raise Exception.new("No location found with name '#{name}'".colorize(:red))
+        end
+        return link
+    end
+
+    def list_remotes(link)
+        request = Net::HTTP::Get.new(link["href"] + "/action/remotes")
+        request.add_field('accept', 'application/vnd.abiquo.virtualdatacenters+json')
+        body = send_request(request).body
+        JsonPath.on(body, "$.collection..")[0].collect{ |x| x["providerId"] }
+    end
+
+    def sync_pcr(link)
+        request = Net::HTTP::Post.new(link.href)
+        request.add_field('accept', 'application/vnd.abiquo.acceptedrequest+json')
+        JsonPath.on(send_request(request).body, "$.links..").collect{ |x| x[0] }.select{ |link| "status" == link["rel"] }[0]
+    end
+
+    def get_status(link)
+        request = Net::HTTP::Get.new(link["href"])
+        request.add_field('accept', 'application/vnd.abiquo.taskextended+json')
+        body = JsonPath.on(send_request(request).body, "$.")[0]
+        job_states = body["jobsExtended"]["collection"].collect{ |x| "#{x["type"]}: #{parse_job_status(x["state"])}" }
+        print "\r#{job_states.join("\t")}"
+        body["state"]
+    end
+
+    def parse_job_status(status)
+        status << " " * ("PENDING".size - status.size)
+        if "DONE   " == status
+            return status.colorize(:green)
+        end
+        if "STARTED" == status
+            return status.colorize(:yellow)
+        end
+        if "FAILED " == status
+            return status.colorize(:red)
+        end
+        return status
+    end
+
+    # Send the request
+    # Params:
+    #   +request+:: the request to send
+    def send_request(request)
+        uri = URI.parse(@conf["location"])
+        http = Net::HTTP.new(uri.host, uri.port)
+        request.basic_auth(@conf["user"], @conf["password"])
+        response = http.request(request)
+        # puts "#{response.code} - #{response.message}"
+        if not response.code =~ /2\d\d/
+            if not response.body.nil? and not response.body.empty?
+                codes = JsonPath.on(response.body, "$.collection..code")
+                messages = JsonPath.on(response.body, "$.collection..message")
+                ex_message = ""
+                codes.zip(messages).each do |code, message|
+                    ex_message << "#{code} - #{message}\n"
+                end
+            else
+                ex_message=""
+            end
+            raise Exception.new(ex_message.colorize(:red))
+        end
+        response
+    end
+end
+
+VdcSync.start(ARGV)

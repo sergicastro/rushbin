@@ -1,0 +1,22 @@
+#!/bin/bash
+destination="root@sergi.bcn.abiquo.com:/opt/abiquo/tomcat/webapps"
+workspace="$HOME/workspace/platform"
+
+CPP="$workspace/cloud-provider-proxy/cpp-server/target/cpp.war"
+NC="$workspace/discovery-manager/discovery-manager-server/target/nodecollector.war"
+VSM="$workspace/monitor-manager/vsm-server/target/vsm.war"
+VF="$workspace/tarantino/tarantino/target/virtualfactory.war"
+BPM="$workspace/conversion-manager/bpm-server/target/bpm-async.war"
+API="$workspace/api/target/api.war"
+AM="$workspace/appliance-manager/am-server/target/am.war"
+SSM="$workspace/storage-manager/ssm-server/target/ssm.war"
+M="$workspace/m/target/m.war"
+
+if [ -z "$1" ]
+    # then origin="$CPP $NC $VSM $VF $BPM $API $AM $SSM $M"
+    then origin="$CPP $NC $VSM $VF $BPM $AM $SSM $M"
+else
+    origin=$(eval echo "\${$1}")
+fi
+
+scp $origin $destination

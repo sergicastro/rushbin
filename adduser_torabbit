@@ -1,0 +1,14 @@
+#!/bin/bash
+set -e
+
+user=$1
+
+if [ -z $user ];
+then
+    echo "$0 <user_name>"
+    exit 1
+fi
+
+sudo rabbitmqctl add_user $user $user
+sudo rabbitmqctl set_user_tags $user administrator
+sudo rabbitmqctl set_permissions -p / $user ".*" ".*" ".*"

@@ -1,0 +1,4 @@
+#!/bin/bash
+
+vsmboyjar=$(find  ~/workspace/platform/monitor-manager/vsmboy/target/ -name vsmboy-*.jar)
+java -jar $vsmboyjar $*

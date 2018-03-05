@@ -1,0 +1,22 @@
+#!/bin/bash
+
+if [[ $(/usr/bin/id -u) -ne 0 ]]; then
+    echo "This is goind to clean redis, rabbit and tomcat, so sudo is required"
+    set -e
+    sudo echo
+fi
+
+echo "Clean tomcat :::"
+echo
+cleantomcat
+echo
+echo "Clean rabbit :::"
+echo
+cleanrabbit
+echo
+echo "Clean redis :::"
+echo
+redis-cli flushall
+echo "Create rabbit user :::"
+echo
+adduser_torabbit abiquo

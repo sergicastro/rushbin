@@ -1,0 +1,15 @@
+# cleanall.yaml
+config:
+    cache-path: /tmp/bashful
+tasks:
+    - name: Clean tomcat
+      cmd: echo cleantomcat
+
+    - name: Clean rabbit
+      cmd: echo cleanrabbit
+
+    - name: Clean redis
+      cmd: echo redis-cli flushall
+
+    - name: Add uset abiquo to rabbit
+      cmd: echo adduser_torabbit abiquo

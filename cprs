@@ -1,0 +1,21 @@
+#!/bin/bash
+
+DESTINATION="root@10.60.12.18:/opt/abiquo/tomcat/webapps"
+
+CPP_PH="$HOME/workspace/platform/cloud-provider-proxy/cpp-server"
+NC_PH="$HOME/workspace/platform/discovery-manager/discovery-manager-server"
+VSM_PH="$HOME/workspace/platform/monitor-manager/vsm-server"
+VF_PH="$HOME/workspace/platform/tarantino/tarantino"
+BPM_PH="$HOME/workspace/platform/conversion-manager/bpm-server"
+
+CPP="$CPP_PH/target/cpp.war"
+NC="$NC_PH/target/nodecollector.war"
+VSM="$VSM_PH/target/vsm.war"
+VF="$VF_PH/target/virtualfactory.war"
+BPM="$BPM_PH/target/bpm-async.war"
+
+scp $CPP $NC $VSM $VF $BPM $DESTINATION
+
+for a in `echo $CPP_PH $NC_PH $VSM_PH $VF_PH $BPM_PH`
+do cd $a && mvn cargo:undeploy
+done

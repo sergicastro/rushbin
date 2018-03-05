@@ -1,0 +1,21 @@
+#!/bin/bash
+from="/opt/tomcat/webapps"
+
+CPP="$from/cpp*"
+NC="$from/nodecollector*"
+VSM="$from/vsm*"
+VF="$from/virtualfactory*"
+BPM="$from/bpm-async*"
+API="$from/api*"
+AM="$from/am*"
+SSM="$from/ssm*"
+M="$from/m.war $from/m"
+
+if [ -z "$1" ]
+    then project_path="$CPP $NC $VSM $VF $BPM $API $AM $SSM $M"
+else
+    project_path=$(eval echo "\${$1}")
+fi
+
+sudo rm -fr $project_path
+cleantomcat

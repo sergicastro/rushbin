@@ -1,0 +1,6 @@
+#!/bin/bash
+
+set -e
+
+undeploy $1
+deploy $1

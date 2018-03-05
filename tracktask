@@ -1,0 +1,26 @@
+#!/bin/bash
+
+set -x
+set -e
+
+user=$1
+password=$2
+filename="/tmp/tracktask$(date +"%s")"
+
+read -d'\0' json
+# echo $json
+echo $json | jq . > $filename
+
+taskurl=$(cat $filename | jq .links[].href | tr -d '\"')
+# taskurl=$(grep "href" $filename | cut -d ":" -f2-4 | tr -d '\"')
+
+state="NONE"
+
+while [[ $state != FINISHED* ]]
+do
+    state=$(curl -u $user:$password $taskurl 2>/dev/null | jq .state | tr -d '\"')
+    echo -ne $state                 \\r
+    sleep 5
+done
+
+# rm $filename

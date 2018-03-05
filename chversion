@@ -1,0 +1,33 @@
+#!/usr/bin/zsh
+
+if [[ $# -eq 1 ]];
+then
+    newversion=$1
+    oldversion=$newversion-SNAPSHOT
+elif [[ $# -eq 2 ]];
+then
+    newversion=$2
+    oldversion=$1
+else
+    echo "usage $0 [oldversion] <newversion>"
+    exit 3
+fi
+
+function countsnap(){
+    snapcount=$(grep "$oldversion" **/pom.xml | wc -l)
+    echo $snapcount
+}
+
+count=$(countsnap)
+echo "$count SNAPSHOT matches found before"
+
+sed -i -- "s/$oldversion/$newversion/g" **/*pom.xml
+
+count=$(countsnap)
+echo "$count SNAPSHOT matches found after"
+
+if [[ "0" -ne "$count" ]];
+then
+    echo "Not all $oldversion replaced"
+    exit 1
+fi

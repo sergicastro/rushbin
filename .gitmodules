@@ -1,0 +1,3 @@
+[submodule "manage-credentials"]
+	path = manage-credentials
+	url = git@github.com:sergicastro/manage-credentials.git
