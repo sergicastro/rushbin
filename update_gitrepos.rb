@@ -43,19 +43,19 @@ class GitCommands
 
     # Returns the actual branch of the actual repo.
     def get_actual_branch
-        `git branch | grep \\*`.split(" ")[1]
+        `git symbolic-ref --quiet HEAD`.split("/")[2].strip!
     end
 
-    # Changes to the given branch the actual repo.
+    # Changes of the given branch the actual repo.
     # Params:
     # +branch+:: the branch where move to.
     def change_to_branch branch
-        `git checkout #{branch} > /dev/null 2>&1`
+        system("git checkout #{branch} --quiet > /dev/null 2>&1")
     end
 
     # Fetches the actual repo with remote called <origin>
     def fetch_repo
-        `git fetch origin > /dev/null 2>&1`
+        system("git fetch origin > /dev/null 2>&1")
     end
 end
 
@@ -100,7 +100,7 @@ class GitRepoManager
                 when "r"
                     error = `git rebase #{remote_branch}`
                 when "R"
-                    puts "This will be delete local changes, are you sure to continue? [N,y]"
+                    puts "This will delete local changes, are you sure to continue? [N,y]"
                     res = gets.chomp.downcase
                     if not res.nil? and ["yes","y"].include? res
                         error = `git reset --hard #{remote_branch}`

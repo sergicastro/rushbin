@@ -6,6 +6,10 @@ GEM
       multi_json
       to_regexp (~> 0.2.1)
     multi_json (1.13.1)
+    power_assert (1.1.1)
+    rake (12.0.0)
+    test-unit (3.2.7)
+      power_assert
     thor (0.20.0)
     to_regexp (0.2.1)
 
@@ -15,7 +19,9 @@ PLATFORMS
 DEPENDENCIES
   colorize (~> 0.8.1)
   jsonpath (~> 0.8.11)
+  rake (~> 12.0.0)
+  test-unit
   thor (~> 0.20.0)
 
 BUNDLED WITH
-   1.15.3
+   1.16.1
