@@ -1,6 +1,8 @@
 require 'test/unit'
-require_relative '../update_gitrepos.rb'
 require_relative 'utils/mock_server.rb'
+
+ENV["UPDATEREPOS"] = "test/test_update_gitrepos.yml"
+require_relative '../update_gitrepos.rb'
 
 
 $envpath = '/tmp/update_gitrepo_test_env'

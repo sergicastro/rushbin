@@ -51,11 +51,6 @@ class Response
     attr_reader :message
     attr_reader :contenttype
 
-    @body
-    @status
-    @message
-    @contenttype
-
     def initialize(status="200", body="{}", message="OK", contenttype="application/json")
         @status = status
         @body = body

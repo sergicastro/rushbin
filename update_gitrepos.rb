@@ -207,10 +207,12 @@ end
 # +modules+:: list of modules to check (each one contains path and branch)
 class ConfigManager
     attr_accessor :modules
+    attr_accessor :enabled
 
     def initialize
-        conf = YAML.load_file(ENV["HOME"]+"/.gitrepoupdate.yml")
+        conf = YAML.load_file(ENV["UPDATEREPOS"].empty? ? ENV["HOME"]+"/.gitrepoupdate.yml" : ENV["UPDATEREPOS"])
         @modules = conf["modules"]
+        @enabled = conf["enabled"]
 
         #last updated file
         $last_update_file = conf["last-update-file"]
@@ -241,9 +243,12 @@ def main
     gitrepo_manager = GitRepoManager.new
     timeMgr = TimeManager.new
     if timeMgr.will_check_for_updates? nil
-        ConfigManager.new.modules.each do |gitmodule|
-            if $global_time_update or timeMgr.will_check_for_updates? gitmodule["path"]
-                gitrepo_manager.check_for_updates gitmodule["path"], gitmodule["branch"]
+        config = ConfigManager.new
+        if config.enabled
+            config.modules.each do |gitmodule|
+                if $global_time_update or timeMgr.will_check_for_updates? gitmodule["path"]
+                    gitrepo_manager.check_for_updates gitmodule["path"], gitmodule["branch"]
+                end
             end
         end
     end

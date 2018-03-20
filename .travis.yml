@@ -4,6 +4,8 @@ env:
 
 language: ruby
 rvm: 2.3.4
+git:
+    submodules: false
 
 install: bundle install
 script: bundle exec rake
