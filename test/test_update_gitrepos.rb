@@ -1,12 +1,17 @@
 require 'test/unit'
 require_relative 'utils/mock_server.rb'
 
+# start coverage
+require "simplecov"
+SimpleCov.start
+
+# use config test
 ENV["UPDATEREPOS"] = "test/test_update_gitrepos.yml"
 require_relative '../update_gitrepos.rb'
 
-
 $envpath = '/tmp/update_gitrepo_test_env'
 
+# start mock server
 $server = MockServer.new
 server_thread = Thread.new do
     $server.run
