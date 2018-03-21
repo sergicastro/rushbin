@@ -210,7 +210,7 @@ class ConfigManager
     attr_accessor :enabled
 
     def initialize
-        conf = YAML.load_file(ENV["UPDATEREPOS"].empty? ? ENV["HOME"]+"/.gitrepoupdate.yml" : ENV["UPDATEREPOS"])
+        conf = YAML.load_file(ENV["UPDATEREPOS"].nil? ? ENV["HOME"]+"/.gitrepoupdate.yml" : ENV["UPDATEREPOS"])
         @modules = conf["modules"]
         @enabled = conf["enabled"]
 
