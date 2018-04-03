@@ -2,18 +2,31 @@
 
 set -e
 
+WORKSPACE="$HOME/workspace/platform"
 DESTINATION="scastro@scastrors:/opt/abiquo/tomcat/webapps"
 
-CPP_PH="$HOME/workspace/platform/cloud-provider-proxy/cpp-server"
-NC_PH="$HOME/workspace/platform/discovery-manager/discovery-manager-server"
-VSM_PH="$HOME/workspace/platform/monitor-manager/vsm-server"
-VF_PH="$HOME/workspace/platform/tarantino/tarantino"
-BPM_PH="$HOME/workspace/platform/conversion-manager/bpm-server"
+CPP="cpp.war"
+NC="nodecollector.war"
+VSM="vsm.war"
+VF="virtualfactory.war"
+BPM="bpm-async.war"
+AM="am.war"
+SSM="ssm.war"
 
-CPP="$CPP_PH/target/cpp.war"
-NC="$NC_PH/target/nodecollector.war"
-VSM="$VSM_PH/target/vsm.war"
-VF="$VF_PH/target/virtualfactory.war"
-BPM="$BPM_PH/target/bpm-async.war"
+if [ -z "$1" ]
+then
+    RSS="$CPP $NC $VSM $VF $BPM $AM $SSM"
+elif [[ " CPP NC VSM VF BPM AM SSM M " == *\ $1\ * ]]
+then
+    RSS=$(eval echo "\${$1}")
+else
+    echo "$0 [CPP,NC,VSM,VF,BPM,AM,SSM]"
+    exit 1
+fi
 
-scp $CPP $NC $VSM $VF $BPM $DESTINATION
+for RS in $RSS;
+do
+    ORIGIN="$ORIGIN $(find $WORKSPACE -name $RS)"
+done
+
+scp $ORIGIN $DESTINATION
