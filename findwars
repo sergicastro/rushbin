@@ -1,0 +1,51 @@
+#!/bin/bash
+
+set -e
+
+WORKSPACE="$HOME/workspace/platform"
+
+CPP="cpp.war"
+NC="nodecollector.war"
+VSM="vsm.war"
+VF="virtualfactory.war"
+BPM="bpm-async.war"
+AM="am.war"
+SSM="ssm.war"
+
+function findwars(){
+    for WAR in $@;
+    do
+        ORIGIN="$ORIGIN $(find $WORKSPACE -name $WAR)"
+    done
+    echo $ORIGIN
+}
+
+function validWARs(){
+    VALID_WARS="$@"
+}
+
+function evaluateInput(){
+    if [ -z "$1" ]
+    then
+        echo $VALID_WARS
+    else
+        for WAR in $@;
+        do
+            if  [[ " $VALID_WARS " == *\ $WAR\ * ]]
+            then
+                WARS="$WARS $(eval echo "\${$WAR}")"
+            else
+                # error message
+                (>&2 echo "skiping $WAR because it's not a valid WAR")
+            fi
+        done
+    fi
+
+    if [ -z "$WARS" ]
+    then
+        echo "$0 [$VALID_WARS]"
+        exit 1
+    fi
+
+    echo $WARS
+}

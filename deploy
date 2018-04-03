@@ -1,29 +1,12 @@
 #!/bin/bash
 
 set -e
+source findwars
 
 destination="/opt/tomcat/webapps"
-workspace="$HOME/workspace/platform"
 
-CPP="$workspace/cloud-provider-proxy/cpp-server/target/cpp.war"
-NC="$workspace/discovery-manager/discovery-manager-server/target/nodecollector.war"
-VSM="$workspace/monitor-manager/vsm-server/target/vsm.war"
-VF="$workspace/tarantino/tarantino/target/virtualfactory.war"
-BPM="$workspace/conversion-manager/bpm-server/target/bpm-async.war"
-API="$workspace/api/target/api.war"
-AM="$workspace/appliance-manager/am-server/target/am.war"
-SSM="$workspace/storage-manager/ssm-server/target/ssm.war"
-M="$workspace/m/target/m.war"
+validWARs "CPP NC VSM VF BPM API AM SSM M"
 
-if [ -z "$1" ]
-then
-    origin="$CPP $NC $VSM $VF $BPM $API $AM $SSM $M"
-elif [[ " CPP NC VSM VF BPM API AM SSM M " == *\ $1\ * ]]
-then
-    origin=$(eval echo "\${$1}")
-else
-    echo "$0 [CPP,NC,VSM,VF,BPM,API,AM,SSM,M]"
-    exit 1
-fi
+wars="$(evaluateInput $@)"
 
-cp -v $origin $destination
+cp -v "$(findwars $wars)" $destination

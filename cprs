@@ -1,32 +1,12 @@
 #!/bin/bash
 
 set -e
+source findwars
 
-WORKSPACE="$HOME/workspace/platform"
-DESTINATION="scastro@scastrors:/opt/abiquo/tomcat/webapps"
+destination="scastro@scastrors:/opt/abiquo/tomcat/webapps"
 
-CPP="cpp.war"
-NC="nodecollector.war"
-VSM="vsm.war"
-VF="virtualfactory.war"
-BPM="bpm-async.war"
-AM="am.war"
-SSM="ssm.war"
+validWARs "CPP NC VSM VF BPM AM SSM M"
 
-if [ -z "$1" ]
-then
-    RSS="$CPP $NC $VSM $VF $BPM $AM $SSM"
-elif [[ " CPP NC VSM VF BPM AM SSM M " == *\ $1\ * ]]
-then
-    RSS=$(eval echo "\${$1}")
-else
-    echo "$0 [CPP,NC,VSM,VF,BPM,AM,SSM]"
-    exit 1
-fi
+rss="$(evaluateInput $@)"
 
-for RS in $RSS;
-do
-    ORIGIN="$ORIGIN $(find $WORKSPACE -name $RS)"
-done
-
-scp $ORIGIN $DESTINATION
+scp "$(findwars $rss)" $destination
