@@ -9,4 +9,4 @@ validWARs "CPP NC VSM VF BPM AM SSM M"
 
 rss="$(evaluateInput $@)"
 
-scp "$(findwars $rss)" $destination
+scp $(findwars $rss) $destination

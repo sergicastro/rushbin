@@ -11,6 +11,8 @@ VF="virtualfactory.war"
 BPM="bpm-async.war"
 AM="am.war"
 SSM="ssm.war"
+API="api.war"
+M="m.war"
 
 function findwars(){
     for WAR in $@;

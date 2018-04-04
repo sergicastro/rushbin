@@ -9,4 +9,4 @@ validWARs "CPP NC VSM VF BPM API AM SSM M"
 
 wars="$(evaluateInput $@)"
 
-cp -v "$(findwars $wars)" $destination
+cp -v $(findwars $wars) $destination
