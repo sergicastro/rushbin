@@ -1,0 +1,19 @@
+#!/bin/bash
+
+value=$1
+storage="/tmp/remotedestination"
+
+if [[ -z $1 ]];
+then
+    test -f $storage
+    testret=$?
+    if [[ 0 -eq $testret ]];
+    then
+        cat $storage
+    else
+        echo "no destination saved"
+    fi
+else
+    echo $value > $storage
+    echo saved
+fi

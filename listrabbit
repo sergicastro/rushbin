@@ -1,8 +1,8 @@
 #!/bin/bash
 
 echo "########### queues ###########"
-sudo rabbitmqctl list_queues
+sudo rabbitmqctl list_queues | column -t
 echo "########### consumers ###########"
-sudo rabbitmqctl list_consumers
+sudo rabbitmqctl list_consumers | column -t
 echo "########### connections ###########"
-sudo rabbitmqctl list_connections
+sudo rabbitmqctl list_connections | column -t

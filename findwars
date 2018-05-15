@@ -23,29 +23,31 @@ function findwars(){
 }
 
 function validWARs(){
-    VALID_WARS="$@"
+    export VALID_WARS="$@"
 }
 
 function evaluateInput(){
+    INWARS="$@"
+    
     if [ -z "$1" ]
     then
-        echo $VALID_WARS
-    else
-        for WAR in $@;
-        do
-            if  [[ " $VALID_WARS " == *\ $WAR\ * ]]
-            then
-                WARS="$WARS $(eval echo "\${$WAR}")"
-            else
-                # error message
-                (>&2 echo "skiping $WAR because it's not a valid WAR")
-            fi
-        done
+        INWARS="$VALID_WARS"
     fi
+
+    for WAR in $INWARS;
+    do
+        if  [[ " $VALID_WARS " == *\ $WAR\ * ]]
+        then
+            WARS="$WARS $(eval echo "\${$WAR}")"
+        else
+            # error message
+            (>&2 echo "skiping $WAR because it's not a valid WAR")
+        fi
+    done
 
     if [ -z "$WARS" ]
     then
-        echo "$0 [$VALID_WARS]"
+        (>&2 echo "$0 [$VALID_WARS]")
         exit 1
     fi
 
