@@ -12,6 +12,7 @@ then
         cat $storage
     else
         echo "no destination saved"
+        exit 1
     fi
 else
     echo $value > $storage
