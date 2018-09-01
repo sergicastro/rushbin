@@ -6,3 +6,4 @@
 [![Issue Count](https://codeclimate.com/github/sergicastro/rushbin/badges/issue_count.svg)](https://codeclimate.com/github/sergicastro/rushbin)
 
 Bulk of scipts
+ caca
